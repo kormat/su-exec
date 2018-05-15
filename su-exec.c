@@ -34,8 +34,10 @@ int main(int argc, char *argv[])
 	}
 	cmdargv = &argv[1];
 
-	// It's not safe to access the environment if running suid, so use
-	// secure_getenv to prevent that.
+	/*
+	 * It's not safe to access the environment if running suid, so use
+	 * secure_getenv to prevent that.
+	 */
 	userspec = secure_getenv(ENV_VAR);
 	if (userspec == NULL) {
 		errx(1, "%s env var not set", ENV_VAR);
@@ -53,7 +55,7 @@ int main(int argc, char *argv[])
 	struct passwd *pw = getpwnam(user);
 	if (pw == NULL) {
 		errx(2, "Unknown user '%s'", user);
-        }
+	}
 	uid_t uid = pw->pw_uid;
 	gid_t gid = pw->pw_gid;
 
@@ -82,8 +84,9 @@ int main(int argc, char *argv[])
 			int r = getgrouplist(pw->pw_name, gid, glist, &ngroups);
 
 			if (r >= 0) {
-				if (setgroups(ngroups, glist) < 0)
+				if (setgroups(ngroups, glist) < 0) {
 					err(1, "setgroups");
+				}
 				break;
 			}
 
@@ -108,4 +111,4 @@ int main(int argc, char *argv[])
 	return 1;
 }
 
-// vim: noet sw=8
+// vim: noet ts=4 sw=4
