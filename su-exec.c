@@ -13,6 +13,8 @@
 #include <string.h>
 #include <unistd.h>
 
+_Static_assert( sizeof(uid_t) <= 4, "The size of uid_t is too big, the source must be updated");
+#define UID_T_STRING_SIZE 11 /* Worst case: "4294967295\0" */
 #define ENV_VAR "SU_EXEC_USERSPEC"
 
 static char *argv0;
@@ -59,7 +61,17 @@ int main(int argc, char *argv[])
 	uid_t uid = pw->pw_uid;
 	gid_t gid = pw->pw_gid;
 
-	setenv("HOME", pw != NULL ? pw->pw_dir : "/", 1);
+	if (pw != NULL) {
+		setenv("HOME", pw->pw_dir, 1);
+		setenv("USER", pw->pw_name, 1);
+		setenv("LOGNAME", pw->pw_name, 1);
+	} else {
+		char tmp[UID_T_STRING_SIZE];
+		snprintf(tmp, UID_T_STRING_SIZE, "%lu", (unsigned long) uid);
+		setenv("HOME", "/", 1);
+		setenv("USER", tmp, 1);
+		setenv("LOGNAME", tmp, 1);
+	}
 
 	if (group && group[0] != '\0') {
 		/* group was specified, ignore grouplist for setgroups later */
