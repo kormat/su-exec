@@ -1,3 +1,6 @@
+# Bazel directories
+bazel-*
+
 # Vim swap files
 .*.swp
 

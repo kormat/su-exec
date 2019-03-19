@@ -44,3 +44,12 @@ PID   USER     TIME   COMMAND
 This does more or less exactly the same thing as [gosu](https://github.com/tianon/gosu)
 but it is only 10kb instead of 1.8MB.
 
+## Bazel build
+
+To build via Bazel:
+
+```
+bazel build //:su-exec
+```
+
+The executable will appear in `bazel-bin` subdirectory.
